@@ -21,9 +21,11 @@
   &:focus {
     background: rgba(255, 255, 255, 0.24);
   }
+
   &:hover {
     background: rgba(255, 255, 255, 0.12);
   }
+
   &:focus {
     border: 1px dotted white;
   }
@@ -48,6 +50,8 @@
   width: 640px;
   height: min(100% - 24px, 720px);
   left: 0;
+
+  // 设置子元素左右居中！！！
   &[data-align="center"] {
     margin-left: auto;
     margin-right: auto;
@@ -71,6 +75,7 @@
 
   &[data-hide="true"] {
     transform: translateY(100px);
+    // opacity: 0;应该经常搭配pointer-events: none;使用吧，看不到也点不了
     opacity: 0;
     pointer-events: none;
   }
@@ -107,6 +112,7 @@ body[data-theme="dark"] .startMenu {
   &[data-allapps="false"] {
     opacity: 1;
   }
+
   &[data-allapps="true"] {
     opacity: 0;
   }

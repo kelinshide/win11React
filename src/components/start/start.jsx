@@ -3,17 +3,21 @@ import { useSelector, useDispatch } from "react-redux";
 import { Icon } from "../../utils/general";
 
 export const StartMenu = () => {
+  // 可以从state.taskbar中拿到align并赋值给align，当该属性发生变化时，组件会重新渲染
+  // align这个属性 localStorage.getItem("taskbar-align") || "center";
   const { align } = useSelector((state) => state.taskbar);
+  // 对其进行处理，以便在组件中使用
   const start = useSelector((state) => {
     var arr = state.startmenu,
+      // 每行排六个，看看要填充多少个空白
       ln = (6 - (arr.pnApps.length % 6)) % 6;
-
+    // 开始菜单里面第一排的app
     for (var i = 0; i < ln; i++) {
       arr.pnApps.push({
         empty: true,
       });
     }
-
+    // 应该是最近使用的意思
     for (i = 0; i < arr.rcApps.length; i++) {
       if (arr.rcApps[i].lastUsed < 0) {
         arr.rcApps[i].lastUsed = "Recently Added";
@@ -35,11 +39,11 @@ export const StartMenu = () => {
         });
 
     tmpApps.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
-
+    // 向allApps中添加27个空数组
     for (i = 0; i < 27; i++) {
       allApps[i] = [];
     }
-
+    //将 tmpApps 数组中的应用按照其名字的首字母进行分类，分类的结果存入 allApps 二维数组中
     for (i = 0; i < tmpApps.length; i++) {
       var t1 = tmpApps[i].name.trim().toUpperCase().charCodeAt(0);
       if (t1 > 64 && t1 < 91) {
@@ -48,9 +52,12 @@ export const StartMenu = () => {
         allApps[0].push(tmpApps[i]);
       }
     }
-
+    // 
+    // 按字母分类的赋值给arr.contApps
     arr.contApps = allApps;
+    // 按名字排序的赋值给arr.allApps
     arr.allApps = tmpApps;
+    // console.log(arr);
     return arr;
   });
 
@@ -63,7 +70,7 @@ export const StartMenu = () => {
   const tabSw = (e) => {
     setTab(e.target.innerText.trim());
   };
-
+  // 根据不同的按钮 触发不同的dispatch
   const clickDispatch = (event) => {
     var action = {
       type: event.target.dataset.action,
@@ -93,7 +100,7 @@ export const StartMenu = () => {
       }
     }
   };
-
+  // 旁边问号的搜索app
   useEffect(() => {
     if (query.length) {
       for (var i = 0; i < start.allApps.length; i++) {
@@ -110,12 +117,16 @@ export const StartMenu = () => {
   return (
     <div
       className="startMenu dpShad"
+      // start.hide 一开始为true opacity: 0设置看不到
       data-hide={start.hide}
+      // 还不知道是干嘛的
       style={{ "--prefix": "START" }}
       data-align={align}
     >
+      {/* 当start已经被正确渲染，并且其中的menu属性为真时 */}
       {start.menu ? (
         <>
+          {/* 菜单的上面一大块  除了底部的名字和电源按钮 */}
           <div className="stmenu" data-allapps={start.showAll}>
             <div className="menuUp">
               <div className="pinnedApps">

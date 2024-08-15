@@ -175,6 +175,8 @@ function App() {
           <div className="desktop" data-menu="desk">
             {/* DesktopApp居然才是桌面图标  后面map两个不是 */}
             <DesktopApp />
+            {/* Object.keys(Applications).map作用是遍历Applications所有的属性 */}
+            {/* 下面两个遍历是为了建立应用，初始时应该是不可见的，然后点击相应的按钮才会可见 */}
             {Object.keys(Applications).map((key, idx) => {
               var WinApp = Applications[key];
               return <WinApp key={idx} />;
@@ -188,13 +190,15 @@ function App() {
                   return <WinApp key={i} icon={app.icon} {...app.data} />;
                 }
               })}
+            {/* 开始键出来的菜单 */}
             <StartMenu />
-            <BandPane />
+            {/* <BandPane />
             <SidePane />
             <WidPane />
-            <CalnWid />
+            <CalnWid /> */}
           </div>
           <Taskbar />
+          {/* 右键菜单 */}
           <ActMenu />
         </div>
       </ErrorBoundary>
