@@ -89,7 +89,7 @@ export const StartMenu = () => {
         type: "STARTHID",
       });
     }
-
+    // 为字母表中每个字母都添加了相应的payload,比如charA，再通过charA找到列表中的那个值，因为给了列表中的字母对应的id
     if (action.type == "STARTALPHA") {
       var target = document.getElementById("char" + action.payload);
       if (target) {
@@ -129,12 +129,20 @@ export const StartMenu = () => {
           {/* 菜单的上面一大块  除了底部的名字和电源按钮 */}
           <div className="stmenu" data-allapps={start.showAll}>
             <div className="menuUp">
+              {/* 上面的Pinned一大块 */}
               <div className="pinnedApps">
+                {/* 上面的Pinned和 All apps那以后那一行 */}
                 <div className="stAcbar">
                   <div className="gpname">Pinned</div>
                   <div
                     className="gpbtn prtclk"
                     onClick={clickDispatch}
+                    // STARTALL这个动作把showAll 取反了，然后通过start.showAll控制两个app区域的透明度，达到切换的效果
+                    // STARTALL效果如下，看看其它属性的影响
+                    // showAll: !state.showAll,
+                    // alpha: false,
+                    // pwctrl: false,
+                    // curAlpha: "A",
                     data-action="STARTALL"
                   >
                     <div>All apps</div>
@@ -164,6 +172,7 @@ export const StartMenu = () => {
               <div className="recApps win11Scroll">
                 <div className="stAcbar">
                   <div className="gpname">Recommended</div>
+                  {/* 有个按钮 被none隐藏了*/}
                   <div className="gpbtn none">
                     <div>More</div>
                     <Icon fafa="faChevronRight" width={8} />
@@ -171,6 +180,7 @@ export const StartMenu = () => {
                 </div>
                 <div className="reApps">
                   {start.rcApps.slice(0, 6).map((app, i) => {
+                    // return (<div className="xx">xx</div>)
                     return app.name ? (
                       <div
                         key={i}
@@ -192,8 +202,10 @@ export const StartMenu = () => {
               </div>
             </div>
           </div>
+          {/* All apps */}
           <div className="allCont" data-allapps={start.showAll}>
             <div className="appCont">
+              {/* 顶部的All apps 和Back */}
               <div className="stAcbar">
                 <div className="gpname">All apps</div>
                 <div
@@ -206,24 +218,27 @@ export const StartMenu = () => {
                 </div>
               </div>
               <div className="allApps win11Scroll" data-alpha={start.alpha}>
+                {/* start.contApps是一个数组，表示每一个字母开头的app集合，0表示a */}
+                {/* 这里构建这个list的方法就是，在useeffect里先将每个字母开头的app整合号放到一个list里，然后遍历这个list，list为空的地方就跳过，否则就插入字母和响应的app */}
                 {start.contApps.map((ldx, i) => {
                   if (ldx.length == 0) return null;
-
                   var tpApps = [];
+                  // 这里插入字母，
                   tpApps.push(
                     <div
                       key={i}
-                      className="allApp prtclk"
+                      className="allApp prtclk lettertop"
                       data-action="STARTALPHA"
                       onClick={clickDispatch}
                       id={`char${i == 0 ? "#" : String.fromCharCode(i + 64)}`}
+                      style={{ zIndex: 1000 + i }}
                     >
                       <div className="ltName">
                         {i == 0 ? "#" : String.fromCharCode(i + 64)}
                       </div>
                     </div>,
                   );
-
+                  // 这里插入app
                   ldx.forEach((app, j) => {
                     tpApps.push(
                       <div
@@ -242,6 +257,7 @@ export const StartMenu = () => {
                   return tpApps;
                 })}
               </div>
+              {/* 选中某一个字母出现的字母表 */}
               <div className="alphaBox" data-alpha={start.alpha}>
                 <div className="alphaCont">
                   <div className="dullApp allApp">
@@ -366,6 +382,7 @@ export const StartMenu = () => {
             <input
               type="text"
               onChange={(event) => {
+                // 这里应该setQuery，然后根据query的不同下面展示不同的内容
                 setQuery(event.target.value.trim());
               }}
               defaultValue={query}
@@ -375,6 +392,7 @@ export const StartMenu = () => {
           </div>
           <div className="flex py-4 px-1 text-xs">
             <div className="opts w-1/2 flex justify-between">
+              {/* opts里面有个&[value="true"]  用来控制下划线 */}
               <div value={atab == "All"} onClick={tabSw}>
                 All
               </div>
@@ -392,6 +410,7 @@ export const StartMenu = () => {
               </div>
             </div>
           </div>
+          {/* 20240829 */}
           <div className="shResult w-full flex justify-between">
             <div
               className="leftSide flex-col px-1"
