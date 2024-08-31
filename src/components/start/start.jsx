@@ -60,6 +60,7 @@ export const StartMenu = () => {
     // console.log(arr);
     return arr;
   });
+  // console.log(start.qksrch)
 
   const [query, setQuery] = useState("");
   const [match, setMatch] = useState({});
@@ -77,6 +78,7 @@ export const StartMenu = () => {
       payload: event.target.dataset.payload,
     };
 
+    // console.log(action);
     if (action.type) {
       dispatch(action);
     }
@@ -443,6 +445,7 @@ export const StartMenu = () => {
                 </div>
               ) : (
                 <>
+                  {/* 没有搜索时的Top apps */}
                   <div className="topApps flex w-full justify-between">
                     {start.rcApps.slice(1, 7).map((app, i) => {
                       return (
