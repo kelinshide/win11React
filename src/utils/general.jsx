@@ -317,30 +317,38 @@ export const ToolBar = (props) => {
     e.preventDefault();
     posM = [e.clientY, e.clientX];
     op = e.currentTarget.dataset.op;
-
+    // op为0表示移动操作
+    // 拖动要拖动toolba的r父元素和父元素的父元素
     if (op == 0) {
       wnapp =
         e.currentTarget.parentElement &&
         e.currentTarget.parentElement.parentElement;
-    } else {
+    }
+    // 调整大小的元素是toolbar的子元素，所以还要加一层
+    else {
+      // vec是四个角元素的属性，用来控制方向
       vec = e.currentTarget.dataset.vec.split(",");
       wnapp =
         e.currentTarget.parentElement &&
         e.currentTarget.parentElement.parentElement &&
         e.currentTarget.parentElement.parentElement.parentElement;
     }
-
+    // wnapp还是有树结构的    就像html一样
     if (wnapp) {
       wnapp.classList.add("notrans");
       wnapp.classList.add("z9900");
       posP = [wnapp.offsetTop, wnapp.offsetLeft];
+      // 得到要移动元素的高度和宽度
       dimP = [
         parseFloat(getComputedStyle(wnapp).height.replaceAll("px", "")),
         parseFloat(getComputedStyle(wnapp).width.replaceAll("px", "")),
       ];
+      // console.log(dimP);
+      // console.log(wnapp);
     }
-
+    // 释放鼠标事件  
     document.onmouseup = closeDrag;
+    // 鼠标拖动事件  
     document.onmousemove = eleDrag;
   };
 
@@ -362,9 +370,10 @@ export const ToolBar = (props) => {
       pos1 = posP[1] + e.clientX - posM[1],
       dim0 = dimP[0] + vec[0] * (e.clientY - posM[0]),
       dim1 = dimP[1] + vec[1] * (e.clientX - posM[1]);
-
+    // 0只要改变位置
     if (op == 0) setPos(pos0, pos1);
     else {
+      // 1 就是要计算大小了  同时还有根据点击的地方的方向来决定
       dim0 = Math.max(dim0, 320);
       dim1 = Math.max(dim1, 320);
       pos0 = posP[0] + Math.min(vec[0], 0) * (dim0 - dimP[0]);
@@ -375,6 +384,7 @@ export const ToolBar = (props) => {
   };
 
   const closeDrag = () => {
+    //  mouseup事件里取消掉mouseup和mouseover事件，否则会一直跟着鼠标走
     document.onmouseup = null;
     document.onmousemove = null;
 
@@ -465,9 +475,13 @@ export const ToolBar = (props) => {
           />
         </div>
       </div>
+      {/* 下面这四个div是实现鼠标在四个边上面能够调整窗口大小功能的 */}
+      {/* resizecont 绝对定位  topone 高度在父亲上面一点width 80% */}
       <div className="resizecont topone">
         <div className="flex">
+          {/* 左上角那个点 可实现上下左右拉伸 */}
           <div
+            // cursor-nw-resize这个属性控制hover是出现一个northwest方向的箭头
             className="conrsz cursor-nw-resize"
             data-op="1"
             onMouseDown={toolDrag}
@@ -481,7 +495,7 @@ export const ToolBar = (props) => {
           ></div>
         </div>
       </div>
-      <div className="resizecont leftone">
+      <div className="resizecont leftone w-3 bg-red-600">
         <div className="h-full">
           <div
             className="edgrsz cursor-w-resize hdws"

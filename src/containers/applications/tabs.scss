@@ -120,7 +120,7 @@
   width: auto;
 
   .btab {
-    width: 176px;
+    min-width: 176px;
     height: 100%;
     margin: 0 4px;
     background: var(--bg1);

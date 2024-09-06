@@ -223,6 +223,7 @@ export const EdgeMenu = () => {
       data-hide={wnapp.hide}
       id={wnapp.icon + "App"}
     >
+      {/* 这个ToolBar是实现窗口可拖动 可变大小 右上角三个图标的 */}
       <ToolBar
         app={wnapp.action}
         icon={wnapp.icon}
@@ -234,7 +235,7 @@ export const EdgeMenu = () => {
         <div className="overTool flex">
           <Icon src={wnapp.icon} width={14} margin="0 6px" />
           <div className="btab">
-            <div>New Tab</div>
+            <div>{url ? url : 'New Tab'}</div>
             <Icon
               fafa="faTimes"
               click={wnapp.action}
