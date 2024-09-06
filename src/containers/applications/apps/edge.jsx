@@ -112,7 +112,7 @@ export const EdgeMenu = () => {
     setErr(false);
   };
 
-  let newUrl = []
+  const [newUrl, setNewUrl] = useState([]);
 
   useEffect(() => {
     if (wnapp.url) {
@@ -129,8 +129,11 @@ export const EdgeMenu = () => {
     }
     // 如果localStorage中有收藏的网址，就把它们放到iframes中
     if (localStorage.getItem("collectUrl")) {
-      newUrl = localStorage.getItem("collectUrl").split(",")
-      newUrl.forEach((url) => {
+      // newUrl = localStorage.getItem("collectUrl").split(",")
+      let urls = localStorage.getItem("collectUrl").split(",");
+      setNewUrl(urls);
+      // 这里也不能直接把newUrl放到iframes中，因为newUrl是个useState，不会立即更新，所以要用urls
+      urls.forEach((url) => {
         setIframes(previframes => {
           return {
             ...previframes,
@@ -154,10 +157,29 @@ export const EdgeMenu = () => {
           [url]: url,
         };
       });
-      newUrl.push(url)
-      localStorage.setItem("collectUrl", newUrl.join(","));
+      // newUrl.push(url)
+      setNewUrl([...newUrl, url]);
+      console.log(newUrl);
+      // 这里是个坑啊 如果直接localStorage存newUrl的话，newUrl还没更新还是上一次的
+      localStorage.setItem("collectUrl", [...newUrl, url].join(","));
     }
 
+  }
+
+  const deleteCollect = () => {
+    console.log(contextMenu.url in iframes);
+    console.log(newUrl);
+    if (newUrl.some(url => url === contextMenu.url)) {
+      setNewUrl(newUrl.filter(url => url !== contextMenu.url));
+      localStorage.setItem("collectUrl", newUrl.filter(url => url !== contextMenu.url).join(","));
+    }
+    setIframes(previframes => {
+      const newIframes = { ...previframes };
+      delete newIframes[contextMenu.url];
+      return newIframes;
+    })
+
+    setContextMenu({ show: false, coords: null });
   }
   // 点击其他地方关掉右键菜单
   const handleClickOutside = (event) => {
@@ -171,7 +193,7 @@ export const EdgeMenu = () => {
 
 
   const handleContextMenu = (event, payload, url) => {
-    // 阻止默认行为
+    // 阻止浏览器的默认行为，浏览器默认右键是有事件的
     event.preventDefault();
 
     // 设置上下文菜单的状态
@@ -185,6 +207,7 @@ export const EdgeMenu = () => {
     document.addEventListener('click', handleClickOutside);
   };
   const handleOverlayClick = () => {
+    console.log('handleOverlayClick');
     setContextMenu({ show: false, coords: null });
   };
 
@@ -365,12 +388,30 @@ export const EdgeMenu = () => {
             left: contextMenu.coords.x,
             top: contextMenu.coords.y,
             backgroundColor: 'white',
-            border: '1px solid black',
-            padding: '5px',
+            border: '1px solid #ddd',
+            borderRadius: '8px', // 圆角
+            padding: '10px', // 内边距
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // 阴影
+            zIndex: 11, // 置顶
           }}
         >
-          这是一个自定义的上下文菜单
-          {/* 可以在这里放置更多的菜单项 */}
+          <button
+            style={{
+              backgroundColor: '#007bff', // 背景颜色
+              color: 'white', // 字体颜色
+              border: 'none', // 去除边框
+              padding: '8px 16px', // 按钮内边距
+              borderRadius: '4px', // 按钮圆角
+              cursor: 'pointer', // 鼠标移入样式
+              transition: 'background-color 0.3s', // 过渡效果
+            }}
+            onClick={(e) => {
+              e.stopPropagation(); // 阻止事件冒泡
+              deleteCollect();
+            }}
+          >
+            删除收藏
+          </button>
         </div>
       )}
     </div>
