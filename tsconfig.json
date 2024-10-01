@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "skipLibCheck": true, // 跳过库文件的类型检查
+        "noEmit": true, // 不生成输出文件
+        "checkJs": true, // 禁用对 JavaScript 文件的类型检查
+        "allowJs": true, // 允许导入 JavaScript 文件
+        "strict": false, // 关闭所有严格的类型检查
+        "noImplicitAny": false, // 允许隐式的 any 类型
+        "noUnusedLocals": false, // 允许未使用的局部变量
+        "noUnusedParameters": false // 允许未使用的参数
+    },
+    "include": [
+        "src/**/*"
+    ], // 确保包含需要的文件路径
+    "exclude": [
+        "node_modules"
+    ] // 排除不需要的文件
+}

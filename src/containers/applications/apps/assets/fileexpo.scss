@@ -25,7 +25,7 @@
   border-right-width: 1px;
   padding: 0.4em 0.8em;
 
-  & > .uicon {
+  &>.uicon {
     margin: 0 0.5em;
   }
 }
@@ -119,6 +119,7 @@
       padding-right: 1em;
 
       .dirCont:hover {
+
         .dirchev,
         .dncont {
           background: rgba(136, 136, 136, 0.3);
@@ -157,7 +158,7 @@
       &:focus {
         display: block;
 
-        & + .dirfbox {
+        &+.dirfbox {
           display: none;
         }
       }
@@ -224,7 +225,7 @@
   width: 100%;
   height: max-content;
 
-  & > .dropdownmenu {
+  &>.dropdownmenu {
     margin-bottom: 0.5em;
   }
 }
@@ -290,11 +291,31 @@
     .conticon {
       align-self: flex-start;
     }
+
     grid-template-columns: repeat(auto-fill, var(--cwidth));
     justify-content: space-between;
     align-items: flex-end;
   }
+
+  .columnshow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-sizing: border-box;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .column-item {
+      display: flex;
+      justify-content: space-between;
+      height: 2rem;
+
+
+    }
+  }
 }
+
 
 .sec3 {
   background: var(--bg2);

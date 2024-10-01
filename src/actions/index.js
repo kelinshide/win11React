@@ -1,3 +1,4 @@
+// @ts-nocheck
 import axios from "axios";
 import store from "../reducers";
 import { dfApps } from "../utils";
@@ -189,8 +190,8 @@ export const changeTheme = () => {
 
 const loadWidget = async () => {
   var tmpWdgt = {
-      ...store.getState().widpane,
-    },
+    ...store.getState().widpane,
+  },
     date = new Date();
 
   // console.log('fetching ON THIS DAY');

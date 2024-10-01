@@ -1,3 +1,4 @@
+// @ts-nocheck
 export class Item {
   constructor({ type, name, info, data, host }) {
     this.type = type || "folder";
@@ -8,7 +9,7 @@ export class Item {
     this.host = host;
     this.id = this.gene();
   }
-
+  // 随机生成的长度为 8 的字符串 
   gene() {
     return Math.random().toString(36).substring(2, 10).toLowerCase();
   }
@@ -28,7 +29,10 @@ export class Item {
 
 export class Bin {
   constructor() {
+    // 表示文件系统的树形结构
     this.tree = [];
+    // 这是一个对象，用来快速查找文件或文件夹的详细信息。通过将文件或文件夹的 id 作为键，lookup 存储每个文件或文件夹的详细信息。
+    //setId存  getId取
     this.lookup = {};
     this.special = {};
   }

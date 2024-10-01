@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Icon, ToolBar, LazyComponent } from "../../../utils/general";
@@ -385,7 +386,7 @@ export const EdgeMenu = () => {
         <div
           className="context-menu"
           style={{
-            position: 'absolute',
+            position: 'fixed',
             left: contextMenu.coords.x,
             top: contextMenu.coords.y,
             backgroundColor: 'white',

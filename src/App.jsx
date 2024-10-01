@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useDispatch, useSelector } from "react-redux";

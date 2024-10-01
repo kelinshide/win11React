@@ -1,8 +1,11 @@
+// @ts-nocheck
+
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Icon, Image, ToolBar } from "../../../utils/general";
 import { dispatchAction, handleFileOpen } from "../../../actions";
 import "./assets/fileexpo.scss";
+import { icon } from "@fortawesome/fontawesome-svg-core";
 
 const NavTitle = (props) => {
   var src = props.icon || "folder";
@@ -100,6 +103,7 @@ export const Explorer = () => {
   const [cpath, setPath] = useState(files.cpath);
   const [searchtxt, setShText] = useState("");
   const dispatch = useDispatch();
+  const [viewIsColumn, setViewIsColumn] = useState(true);
 
   const handleChange = (e) => setPath(e.target.value);
   const handleSearchChange = (e) => setShText(e.target.value);
@@ -185,7 +189,7 @@ export const Explorer = () => {
         name="File Explorer"
       />
       <div className="windowScreen flex flex-col">
-        <Ribbon />
+        <Ribbon viewIsColumn={viewIsColumn} setViewIsColumn={setViewIsColumn} />
         <div className="restWindow flex-grow flex flex-col">
           <div className="sec1">
             <Icon
@@ -236,7 +240,7 @@ export const Explorer = () => {
           </div>
           <div className="sec2">
             <NavPane />
-            <ContentArea searchtxt={searchtxt} />
+            <ContentArea searchtxt={searchtxt} viewIsColumn={viewIsColumn} />
           </div>
           <div className="sec3">
             <div className="item-count text-xs">{fdata.data.length} items</div>
@@ -265,18 +269,24 @@ export const Explorer = () => {
   );
 };
 
-const ContentArea = ({ searchtxt }) => {
+const ContentArea = ({ searchtxt, viewIsColumn }) => {
   const files = useSelector((state) => state.files);
   const special = useSelector((state) => state.files.data.special);
   const [selected, setSelect] = useState(null);
   const fdata = files.data.getId(files.cdir);
+  // const [fdata, setFData] = useState(files.data.getId(files.cdir));
+  // console.log(files);
   const dispatch = useDispatch();
-
+  const [isCreateFile, setiSCreateFile] = useState(false);
+  const [menuPosition, setMenuPosition] = useState([0, 0]);
+  // const [path, setPath] = useState(files.cpath);
+  const path = files.cpath;
   const handleClick = (e) => {
     e.stopPropagation();
     setSelect(e.target.dataset.id);
   };
-
+  // console.log(fdata);
+  console.log(viewIsColumn);
   const handleDouble = (e) => {
     e.stopPropagation();
     handleFileOpen(e.target.dataset.id);
@@ -285,12 +295,54 @@ const ContentArea = ({ searchtxt }) => {
   const emptyClick = (e) => {
     setSelect(null);
   };
+  const menu = (e) => {
+    // console.log(e);
+    setMenuPosition([e.clientX, e.clientY]);
+    setiSCreateFile(!isCreateFile)
+    document.addEventListener('click', handleClickOutside);
+  }
+  const handleClickOutside = (e) => {
+    if (!e.target.classList.contains('contentarea')) {
+      setiSCreateFile(false);
+      document.removeEventListener('click', handleClickOutside);
+    }
+  }
+
+  const createFile = () => {
+    console.log(path);
+    // fdata.data.push({
+
+    // });
+    let newFile = {
+      type: fdata.type,
+      name: fdata.name,
+      info: {
+        icon: "folder",
+      },
+      data: [
+        ...fdata.data,
+        {
+          type: "folder",
+          name: "New Folder",
+          info: {
+            icon: "folder",
+          },
+          data: [],
+        }
+      ],
+
+    }
+    // setFData(newFile);
+  }
 
   const handleKey = (e) => {
     if (e.key == "Backspace") {
       dispatch({ type: "FILEPREV" });
     }
   };
+  // useEffect(() => {
+  //   console.log('reload');
+  // });
 
   return (
     <div
@@ -299,8 +351,13 @@ const ContentArea = ({ searchtxt }) => {
       onKeyDown={handleKey}
       tabIndex="-1"
     >
-      <div className="contentwrap win11Scroll">
-        <div className="gridshow" data-size="lg">
+      <div className="contentwrap win11Scroll"
+        onContextMenu={(e) => {
+          menu(e)
+        }}
+        onClick={() => { setiSCreateFile(false) }}>
+
+        {viewIsColumn ? (<div className="gridshow" data-size="lg">
           {fdata.data.map((item, i) => {
             return (
               item.name.includes(searchtxt) && (
@@ -318,11 +375,60 @@ const ContentArea = ({ searchtxt }) => {
               )
             );
           })}
-        </div>
+        </div>) : (<div className="columnshow" data-size="lg">
+          {fdata.data.map((item, i) => {
+            return (
+              item.name.includes(searchtxt) && (
+                <div
+                  key={i}
+                  className=" conticon column-item hvtheme"
+                  data-id={item.id}
+                  data-focus={selected == item.id}
+                  onClick={handleClick}
+                  onDoubleClick={handleDouble}
+                >
+                  <Image src={`icon/win/${item.info.icon}`} w={24} />
+                  <span>{item.name}</span>
+                </div>
+              )
+            );
+          })}
+        </div>)}
         {fdata.data.length == 0 ? (
           <span className="text-xs mx-auto">This folder is empty.</span>
         ) : null}
       </div>
+
+      {isCreateFile && <div className="create-new-file w-20 h-20 bg-blue-500" style={{
+        position: 'fixed',
+        left: menuPosition[0],
+        top: menuPosition[1],
+        backgroundColor: 'white',
+        border: '1px solid #ddd',
+        borderRadius: '8px', // 圆角
+        padding: '10px', // 内边距
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', // 阴影
+        zIndex: 11, // 置顶
+      }}
+      >
+        <div
+          style={{
+            backgroundColor: '#007bff', // 背景颜色
+            color: 'white', // 字体颜色
+            border: 'none', // 去除边框
+            padding: '8px 16px', // 按钮内边距
+            borderRadius: '4px', // 按钮圆角
+            cursor: 'pointer', // 鼠标移入样式
+            transition: 'background-color 0.3s', // 过渡效果
+          }}
+          onClick={(e) => {
+            e.stopPropagation(); // 阻止事件冒泡
+            createFile();
+          }}
+        >
+          新建文件夹
+        </div>
+      </div>}
     </div>
   );
 };
@@ -369,7 +475,7 @@ const NavPane = ({}) => {
   );
 };
 
-const Ribbon = ({}) => {
+const Ribbon = ({ viewIsColumn, setViewIsColumn }) => {
   return (
     <div className="msribbon flex">
       <div className="ribsec">
@@ -390,7 +496,11 @@ const Ribbon = ({}) => {
           <Icon src="sort" ui width={18} margin="0 6px" />
           <span>Sort</span>
         </div>
-        <div className="drdwcont flex">
+        <div className="drdwcont flex"
+          onClick={(e) => {
+            e.stopPropagation();
+            setViewIsColumn(!viewIsColumn)
+          }}>
           <Icon src="view" ui width={18} margin="0 6px" />
           <span>View</span>
         </div>

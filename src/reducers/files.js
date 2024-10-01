@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Bin } from "../utils/bin";
 import fdata from "./dir.json";
 
@@ -11,8 +12,11 @@ const defState = {
 defState.hist.push(defState.cdir);
 defState.data = new Bin();
 defState.data.parse(fdata);
+console.log('file.js');
+console.log(defState.data);
 
 const fileReducer = (state = defState, action) => {
+  console.log('fileReducer');
   var tmp = { ...state };
   var navHist = false;
 
@@ -53,6 +57,7 @@ const fileReducer = (state = defState, action) => {
   }
 
   tmp.cpath = tmp.data.getPath(tmp.cdir);
+  console.log(tmp);
   return tmp;
 };
 
